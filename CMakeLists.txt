@@ -19,7 +19,7 @@ if(NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE)
 endif()
 
 
-option(BUILD_SHARED_LIBS "Build FCollada as a shared library." OFF)
+option(FCOLLADA_SHARED "Build FCollada as a shared library." OFF)
 option(FCOLLADA_BUILD_UNICODE "Build FCollada in wide-character mode." OFF)
 option(FCOLLADA_BUILD_TESTING "Build the test suite." OFF)
 option(FCOLLADA_BUILD_DOCS "Build html docs using doxygen" OFF)
@@ -44,6 +44,11 @@ if(FCOLLADA_USE_FMT_HEADER_ONLY)
     add_definitions(-DFMT_HEADER_ONLY)
 endif()
 
+if(FCOLLADA_SHARED)
+    set(FCOLLADA_LIB_TYPE SHARED)
+else()
+    set(FCOLLADA_LIB_TYPE STATIC)
+endif()
 
 if(NOT MSVC)
     # clang-14 enabled it by default and on aarch64 this results
@@ -53,7 +58,7 @@ endif()
 
 
 set(LIBRARY_NAME FCollada)
-if(NOT BUILD_SHARED_LIBS AND NOT MSVC)
+if(NOT FCOLLADA_SHARED AND NOT MSVC)
     set(LIBRARY_NAME "${LIBRARY_NAME}S")
 endif()
 if(FCOLLADA_BUILD_UNICODE)
@@ -63,7 +68,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT MSVC)
     set(LIBRARY_NAME "${LIBRARY_NAME}D")
 endif()
 
-add_library(FCollada)
+add_library(FCollada ${FCOLLADA_LIB_TYPE})
 target_compile_features(FCollada PUBLIC cxx_std_17)
 target_link_libraries(FCollada
     LibXml2::LibXml2
