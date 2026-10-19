@@ -20,12 +20,12 @@ endif()
 
 
 option(BUILD_SHARED_LIBS "Build FCollada as a shared library." OFF)
-option(BUILD_UNICODE "Build FCollada in wide-character mode." OFF)
-option(BUILD_TESTING "Build the test suite." OFF)
-option(BUILD_DOCS "Build html docs using doxygen" OFF)
-option(USE_FMT_HEADER_ONLY "Use header only fmt library" OFF)
-
+option(FCOLLADA_BUILD_UNICODE "Build FCollada in wide-character mode." OFF)
+option(FCOLLADA_BUILD_TESTING "Build the test suite." OFF)
+option(FCOLLADA_BUILD_DOCS "Build html docs using doxygen" OFF)
+option(FCOLLADA_USE_FMT_HEADER_ONLY "Use header only fmt library" OFF)
 option(FCOLLADA_ENABLE_COVERAGE "Build with coverage support." OFF)
+
 mark_as_advanced(FCOLLADA_ENABLE_COVERAGE)
 
 find_package(LibXml2 REQUIRED)
@@ -36,11 +36,11 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_definitions(-D_DEBUG)
 endif()
 
-if(BUILD_UNICODE)
+if(FCOLLADA_BUILD_UNICODE)
     add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
-if(USE_FMT_HEADER_ONLY)
+if(FCOLLADA_USE_FMT_HEADER_ONLY)
     add_definitions(-DFMT_HEADER_ONLY)
 endif()
 
@@ -56,7 +56,7 @@ set(LIBRARY_NAME FCollada)
 if(NOT BUILD_SHARED_LIBS AND NOT MSVC)
     set(LIBRARY_NAME "${LIBRARY_NAME}S")
 endif()
-if(BUILD_UNICODE)
+if(FCOLLADA_BUILD_UNICODE)
     set(LIBRARY_NAME "${LIBRARY_NAME}U")
 endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT MSVC)
@@ -90,7 +90,7 @@ target_sources(FCollada
 add_executable(FColladaTest)
 set_target_properties(FColladaTest
     PROPERTIES
-        EXCLUDE_FROM_ALL "$<NOT:$<BOOL:${BUILD_TESTING}>>"
+        EXCLUDE_FROM_ALL "$<NOT:$<BOOL:${FCOLLADA_BUILD_TESTING}>>"
 )
 target_link_libraries(FColladaTest FCollada)
 target_include_directories(FColladaTest PRIVATE FCollada/FColladaTest)
@@ -131,7 +131,7 @@ if(FCOLLADA_ENABLE_COVERAGE)
 endif()
 
 
-if(BUILD_DOCS)
+if(FCOLLADA_BUILD_DOCS)
     find_package(Doxygen REQUIRED)
     doxygen_add_docs(doxygen
         "${CMAKE_SOURCE_DIR}/FCollada"
