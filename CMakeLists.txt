@@ -79,6 +79,8 @@ set_target_properties(${PROJECT_NAME}
     PROPERTIES
         OUTPUT_NAME "${LIBRARY_NAME}"
 )
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<BOOL:${FCOLLADA_BUILD_UNICODE}>>>:FMT_UNICODE=0>)
+target_compile_options(${PROJECT_NAME} PRIVATE $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<BOOL:${FCOLLADA_BUILD_UNICODE}>>:/utf-8>)
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
 
