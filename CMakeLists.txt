@@ -25,6 +25,7 @@ option(FCOLLADA_BUILD_TESTING "Build the test suite." OFF)
 option(FCOLLADA_BUILD_DOCS "Build html docs using doxygen" OFF)
 option(FCOLLADA_USE_FMT_HEADER_ONLY "Use header only fmt library" OFF)
 option(FCOLLADA_ENABLE_COVERAGE "Build with coverage support." OFF)
+option(FCOLLADA_INSTALL "Enables the installation target" ON)
 
 mark_as_advanced(FCOLLADA_ENABLE_COVERAGE)
 
@@ -146,15 +147,15 @@ if(FCOLLADA_BUILD_DOCS)
         COMMENT "Generate html pages")
 endif()
 
-
-install(TARGETS FCollada
-    FILE_SET HEADERS
-)
-
-configure_file("fcollada.pc.in" "fcollada.pc" @ONLY)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fcollada.pc"
-    DESTINATION "lib/pkgconfig")
-
+if(FCOLLADA_INSTALL)
+    install(TARGETS FCollada
+        FILE_SET HEADERS
+    )
+    configure_file("fcollada.pc.in" "fcollada.pc" @ONLY)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fcollada.pc"
+            DESTINATION "lib/pkgconfig"
+    )
+endif()
 
 add_subdirectory(FCollada)
 add_subdirectory(FColladaPlugins)
