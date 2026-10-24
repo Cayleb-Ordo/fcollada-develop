@@ -150,12 +150,42 @@ if(FCOLLADA_BUILD_DOCS)
 endif()
 
 if(FCOLLADA_INSTALL)
+    include(GNUInstallDirs)
     install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}Targets
         FILE_SET HEADERS
     )
     configure_file("fcollada.pc.in" "fcollada.pc" @ONLY)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fcollada.pc"
             DESTINATION "lib/pkgconfig"
+    )
+    # CMake find_package support
+    include(CMakePackageConfigHelpers)
+    set(FCOLLADA_CONFIG_FILE_NAME ${PROJECT_NAME}Config)
+    # CMake configuration files installation directory
+    set(FCOLLADA_TARGET_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/${FCOLLADA_CONFIG_FILE_NAME}Version.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
+    # Configures the meta-file FColladaConfig.cmake.in to replace variables with paths/values/etc.
+    configure_package_config_file("cmake/${FCOLLADA_CONFIG_FILE_NAME}.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/${FCOLLADA_CONFIG_FILE_NAME}.cmake"
+        INSTALL_DESTINATION "${FCOLLADA_TARGET_INSTALL_CMAKEDIR}"
+    )
+
+    install(EXPORT ${PROJECT_NAME}Targets
+        # Puts the targets into the FCollada namespace
+        # So this makes FCollada::FCollada linkable after doing find_package(FCollada)
+        NAMESPACE ${PROJECT_NAME}::
+        DESTINATION ${FCOLLADA_TARGET_INSTALL_CMAKEDIR}
+    )
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/${FCOLLADA_CONFIG_FILE_NAME}.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${FCOLLADA_CONFIG_FILE_NAME}Version.cmake"
+        DESTINATION ${FCOLLADA_TARGET_INSTALL_CMAKEDIR}
     )
 endif()
 
